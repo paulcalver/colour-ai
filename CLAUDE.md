@@ -28,6 +28,7 @@ research/              one folder per part of the tech stack, each with notes.md
   05-networking-security  Wi-Fi, TLS, proxy, key handling
   06-demo-and-presentation  fallbacks, enclosure, write-up
 
+demo/                  browser visualiser for testing prompts and looks (block or LED tube), see demo/README.md
 firmware/              MCU code (empty so far)
 proxy/                 optional server-side relay that holds the API key (empty so far)
 hardware/              wiring diagrams, parts list, enclosure files (empty so far)
