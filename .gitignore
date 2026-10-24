@@ -1,0 +1,9 @@
+secrets.h
+.env
+*.env
+.DS_Store
+.pio/
+.vscode/
+build/
+node_modules/
+data/_scratch/
