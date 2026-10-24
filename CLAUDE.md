@@ -3,7 +3,7 @@
 Master context file. Read this first, keep it current, keep it short. Detail lives in `research/`.
 
 ## Purpose
-A university project: a small physical machine where you type one word (or a few at most), an AI API replies with a **single colour only**, and the colour is shown on a screen or LEDs. It must run on a **microcontroller (MCU)**, which limits what is possible. The owner is a creative practitioner: favour plain explanations, and say what each choice means for the final object.
+A university project: a small physical machine where you type one word (or a few at most), an AI API replies with a colour, and the colour is shown on a screen or LEDs. The original brief is a **single colour only**; the current working assumption under test is a small colour scheme (up to five weighted colours, plus a motion and tempo) shown on a vertical LED tube. A single colour is still valid. It must run on a **microcontroller (MCU)**, which limits what is possible. The owner is a creative practitioner: favour plain explanations, and say what each choice means for the final object.
 
 ## Working rules
 - UK English spelling and grammar. No em dashes in any writing.
@@ -31,20 +31,22 @@ research/              one folder per part of the tech stack, each with notes.md
 demo/                  browser visualiser for testing prompts and looks (block or LED tube), see demo/README.md
 firmware/              MCU code (empty so far)
 proxy/                 optional server-side relay that holds the API key (empty so far)
-hardware/              wiring diagrams, parts list, enclosure files (empty so far)
+hardware/              parts-list.md (proposed), wiring diagrams and enclosure files to come
 ```
 
 ## Architecture (working assumption, see research/00-overview)
-word in -> MCU (ESP32 class, Wi-Fi) -> HTTPS POST to proxy or LLM API -> reply must be one hex colour -> MCU validates with a regex -> display. The model cannot run on the MCU; the "AI" is a cloud call.
+word in (I2C keyboard, small OLED echoes it) -> MCU (ESP32 class, Wi-Fi) -> HTTPS POST to proxy or LLM API -> reply is JSON: up to five weighted hex colours plus motion (`static`, `fade`, `drift`, `pulse`) and tempo -> MCU validates (strict `#RRGGBB`, clamp tempo, fall back to a neutral colour) -> computes one colour per LED on the CPU (no shader or GPU needed) -> SK6812 RGBW tube. The model cannot run on the MCU; the "AI" is a cloud call. Reply format, validation rules and prompt are in `demo/` and `research/04-ai-api`. Reasons are in the decisions log in `research/00-overview/notes.md`.
 
 ## Open decisions
 1. Which MCU board does the university supply or require?
-2. Output: TFT screen, LED ring, or single RGB LED?
-3. Input: phone web form served by the MCU, USB keyboard, or rotary encoder?
+2. Output: working assumption is a vertical LED tube (see decisions log). Confirm tube count, length and whether stage-style or designed object. Screen or block-only remains the fallback.
+3. Input: working assumption is a small I2C keyboard plus an OLED. Alternatives: USB keyboard, phone web form served by the MCU, rotary encoder.
 4. Call the LLM API directly from the MCU, or via a proxy? (Proxy recommended for key safety.)
 5. Is there a written research component, and what format?
 
 ## Next steps (suggested)
 - Answer the open decisions above and record them in `research/00-overview/notes.md`.
 - Verify the facts marked "to verify" in each `notes.md` and add links to `sources.md`.
-- Write a first firmware sketch: Wi-Fi, one API call, hex validation, fill the display.
+- Test prompts in `demo/` with real words and record results in `research/04-ai-api/notes.md` (no API key yet, so paste replies by hand).
+- Order a sample SK6812 strip and frosted tube, and check the diffusion look and per-LED current on the datasheet.
+- Write a first firmware sketch: Wi-Fi, one API call, JSON validation, fill an LED array.
